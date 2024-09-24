@@ -14,12 +14,13 @@ db.collection("recipes").onSnapshot((snapshot) => {
     // console.log(snapshot.docChanges());
     snapshot.docChanges().forEach((change) => {
         // console.log(change, change.doc.data(), change.doc.id);
-        if (change.type == "added") {
+        if (change.type === "added") {
             // add the document data to the web page
             renderRecipe(change.doc.data(), change.doc.id);
         }
-        if (change.type == "removed") {
+        if (change.type === "removed") {
             // remove the document data from the web page
+            removeRecipe(change.doc.id);
         }
     });
 });
@@ -40,4 +41,14 @@ form.addEventListener("submit", (evt) => {
 
     form.title.value = "";
     form.ingredients.value = "";
+});
+
+// delete a recipe
+const recipeContainer = document.querySelector(".recipes");
+recipeContainer.addEventListener("click", (evt) => {
+    if (evt.target.tagName === "I") {
+        const id = evt.target.getAttribute("data-id");
+        db.collection("recipes").doc(id).delete();
+        console.log("recipe is deleted");
+    }
 });
